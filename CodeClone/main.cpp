@@ -1,10 +1,9 @@
 #include <iostream>
-#include <fstream>
-#include <jsoncpp/json/json.h>
+#include "clone_detection.h"
 
 using namespace std;
 
-int main(){
+void ejemplo(){
 
     // ################################################################################################
     //                      Proceso de escritura
@@ -63,12 +62,41 @@ int main(){
     // Obtener el tamano del JSON Array
     cout << "Size: " << obj.size() << endl;
 
+
+
     // Obtener el segundo elemento del JSON Array
-    auto method = obj[1];
+    Json::Value method = obj[1];
 
     // Imprimir los valores para ver que lo lea bien
     cout << "Language: " << method["language"].asString() << endl;
     cout << "Id: " << method["id"].asInt() << endl;
+
+}
+
+
+int main(){
+
+    string prueba = "/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Type-2-Clones/prueba.json";
+
+    CloneDetection cd(prueba);
+
+    double start_time, run_time;
+
+    start_time = omp_get_wtime();
+    vector<int> result = cd.doDetection();
+    run_time = omp_get_wtime() - start_time;
+    cd.reportCodeClone(result);
+
+
+    cout << "Serial code clone detection in " << run_time << " seconds" << endl << endl;
+
+    start_time = omp_get_wtime();
+    result = cd.doDetection_ThreadVersion();
+    run_time = omp_get_wtime() - start_time;
+
+    cd.reportCodeClone(result);
+
+    cout << "OpenMP code clone detection in " << run_time << " seconds" << endl;
 
     return 0;
 }
