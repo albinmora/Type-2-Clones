@@ -13,7 +13,7 @@ int main(){
     ofstream ofs;
 
     // Se abre o crea el archivo
-    ofs.open("/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Proyecto-AST/creado.json");
+    ofs.open("/home/albin/Documents/creado.json");
 
     // JSON Object
     Json::Value writeValue;
@@ -49,7 +49,7 @@ int main(){
     // ################################################################################################/
 
     // Abrir el archivo
-    ifstream ifs("/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Proyecto-AST/creado.json");
+    ifstream ifs("/home/albin/Documents/creado.json");
 
     // Objeto para leer el JSON
     Json::Reader reader;
