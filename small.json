@@ -1,0 +1,46 @@
+[
+   {
+      "LN" : 10,
+      "IF" : 1,
+      "CIC": 1,
+      "RTN": 1,
+      "ARG": 2,
+      "LOC": 1,
+      "FUN": 3,
+      "class":"Logger",
+      "name": "foo"		
+   },
+   {
+      "LN" : 20,
+      "IF" : 3,
+      "CIC": 4,
+      "RTN": 5,
+      "ARG": 2,
+      "LOC": 6,
+      "FUN": 3,
+      "class":"Adder",
+      "name": "red"		
+   },
+   {
+      "LN" : 10,
+      "IF" : 1,
+      "CIC": 1,
+      "RTN": 1,
+      "ARG": 2,
+      "LOC": 1,
+      "FUN": 3,
+      "class":"Writer",
+      "name": "decwrite"		
+   },
+   {
+      "LN" : 10,
+      "IF" : 1,
+      "CIC": 1,
+      "RTN": 1,
+      "ARG": 2,
+      "LOC": 1,
+      "FUN": 3,
+      "class":"Observer",
+      "name": "notify"		
+   }
+]

@@ -1,5 +1,11 @@
 #include <iostream>
+<<<<<<< HEAD:CodeClone/main.cpp
 #include "clone_detection.h"
+=======
+#include <fstream>
+#include <jsoncpp/json/json.h>
+#include <../include/json_parser.hpp>
+>>>>>>> a11a3466cfa23b7aba2c846a076d7cacf21fc98a:src/main.cpp
 
 using namespace std;
 
@@ -71,6 +77,7 @@ void ejemplo(){
     cout << "Language: " << method["language"].asString() << endl;
     cout << "Id: " << method["id"].asInt() << endl;
 
+<<<<<<< HEAD:CodeClone/main.cpp
 }
 
 
@@ -98,6 +105,11 @@ int main(){
 
     cout << "OpenMP code clone detection in " << run_time << " seconds" << endl;
 
+=======
+    cout <<  "New";
+
+    json_parse();
+>>>>>>> a11a3466cfa23b7aba2c846a076d7cacf21fc98a:src/main.cpp
     return 0;
 }
 
