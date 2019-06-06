@@ -45,9 +45,11 @@ std::vector<int> CloneDetection::vectorizeMethod(Json::Value method){
 
     std::vector<int> vectorize_method;
 
+    vectorize_method.resize(method_attributes.size());
+
     for(int i = 0; i < (int) method_attributes.size(); ++i){
 
-        vectorize_method.push_back(method[method_attributes[i]].asInt());
+        vectorize_method[i] = method[method_attributes[i]].asInt();
     }
 
     return vectorize_method;
@@ -58,6 +60,8 @@ std::vector<int> CloneDetection::vectorizeMethod_ThreadVersion(Json::Value metho
 
     std::vector<int> vectorize_method;
 
+    vectorize_method.resize(method_attributes.size());
+
     omp_set_num_threads(2*omp_get_num_procs());
 
     #pragma omp parallel
@@ -65,7 +69,7 @@ std::vector<int> CloneDetection::vectorizeMethod_ThreadVersion(Json::Value metho
         #pragma omp for
         for(int i = 0; i < (int) method_attributes.size(); ++i){
 
-            vectorize_method.push_back(method[method_attributes[i]].asInt());
+            vectorize_method[i] = method[method_attributes[i]].asInt();
         }
     }
 
@@ -117,6 +121,8 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON_ThreadVersion(){
     // Leer todo el JSON Array o JSON Object que este en el archivo
     reader.parse(ifs, array);
 
+    vectors.resize(array.size());
+
     omp_set_num_threads(2*omp_get_num_procs());
 
     #pragma omp parallel
@@ -124,7 +130,7 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON_ThreadVersion(){
         #pragma omp for
         for(int i = 0; i < (int)array.size(); ++i){
 
-           vectors.push_back(vectorizeMethod_ThreadVersion(array[i]));
+           vectors[i] = vectorizeMethod(array[i]);
         }
     }
 
@@ -137,79 +143,64 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON_ThreadVersion(){
 
 std::vector<int> CloneDetection::doDetection(){
 
-    int clone_id, i, j;
+    int i, j;
     std::vector<std::vector<int>> vector_array;
-    std::vector<int> result;
 
     vector_array = vectorizeJSON();
 
-    result.resize(vector_array.size());
-
-    clone_id = 1;
 
     for(i = 0; i < (int) vector_array.size(); ++i){
 
-        if(result[i] == 0){
-
-            result[i] = clone_id;
-            ++clone_id;
-        }
-
         for(j = i+1; j < (int) vector_array.size(); ++j){
 
-            if(vector_array[i] == vector_array[j]){
+            if(vector_array[i][0] == vector_array[j][0] &&
+               vector_array[i][1] == vector_array[j][1] &&
+               vector_array[i][2] == vector_array[j][2] &&
+               vector_array[i][3] == vector_array[j][3] &&
+               vector_array[i][4] == vector_array[j][4] &&
+               vector_array[i][5] == vector_array[j][5] &&
+               vector_array[i][6] == vector_array[j][6]){
 
-                if(result[j] == 0){
 
-                    result[j] = clone_id - 1;
-                }
             }
         }
     }
 
-    return result;
+    return vector_array[0];
 }
 
 std::vector<int> CloneDetection::doDetection_ThreadVersion(){
 
-    int clone_id, i, j;
     std::vector<std::vector<int>> vector_array;
-    std::vector<int> result;
 
     vector_array = vectorizeJSON_ThreadVersion();
 
-    result.resize(vector_array.size());
-
-    clone_id = 1;
-
+    // *omp_get_num_procs()
     omp_set_num_threads(2*omp_get_num_procs());
 
     #pragma omp parallel
     {
+
         #pragma omp for
-        for(i = 0; i < (int) vector_array.size(); ++i){
+        for(int i = 0; i < (int) vector_array.size(); ++i){
 
-            if(result[i] == 0){
+            for(int j = i+1; j < (int) vector_array.size(); ++j){
 
-                result[i] = clone_id;
-                ++clone_id;
-            }
+                if(vector_array[i][0] == vector_array[j][0] &&
+                   vector_array[i][1] == vector_array[j][1] &&
+                   vector_array[i][2] == vector_array[j][2] &&
+                   vector_array[i][3] == vector_array[j][3] &&
+                   vector_array[i][4] == vector_array[j][4] &&
+                   vector_array[i][5] == vector_array[j][5] &&
+                   vector_array[i][6] == vector_array[j][6]){
 
-            #pragma omp for
-            for(j = i+1; j < (int) vector_array.size(); ++j){
 
-                if(vector_array[i] == vector_array[j]){
-
-                    if(result[j] == 0){
-
-                        result[j] = clone_id - 1;
-                    }
                 }
             }
         }
     }
 
-    return result;
+    return vector_array[0];
 
 }
 
