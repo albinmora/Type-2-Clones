@@ -130,7 +130,7 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON_ThreadVersion(){
         #pragma omp for
         for(int i = 0; i < (int)array.size(); ++i){
 
-           vectors[i] = vectorizeMethod(array[i]);
+           vectors[i] = vectorizeMethod_ThreadVersion(array[i]);
         }
     }
 
@@ -141,13 +141,18 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON_ThreadVersion(){
     return vectors;
 }
 
-std::vector<int> CloneDetection::doDetection(){
+std::vector<std::vector<int>> CloneDetection::doDetection(){
 
     int i, j;
     std::vector<std::vector<int>> vector_array;
+    std::vector<std::vector<int>> result_array;
 
     vector_array = vectorizeJSON();
 
+    for(i = 0; i < (int) vector_array.size(); ++i){
+
+        result_array.push_back(std::vector<int>());
+    }
 
     for(i = 0; i < (int) vector_array.size(); ++i){
 
@@ -162,25 +167,31 @@ std::vector<int> CloneDetection::doDetection(){
                vector_array[i][6] == vector_array[j][6]){
 
 
+                result_array[i].push_back(j);
+
             }
         }
     }
 
-    return vector_array[0];
+    return result_array;
 }
 
-std::vector<int> CloneDetection::doDetection_ThreadVersion(){
+std::vector<std::vector<int>> CloneDetection::doDetection_ThreadVersion(){
 
     std::vector<std::vector<int>> vector_array;
+    std::vector<std::vector<int>> result_array;
 
     vector_array = vectorizeJSON_ThreadVersion();
 
-    // *omp_get_num_procs()
+    for(int k = 0; k < (int) vector_array.size(); ++k){
+
+        result_array.push_back(std::vector<int>());
+    }
+
     omp_set_num_threads(2*omp_get_num_procs());
 
     #pragma omp parallel
     {
-
         #pragma omp for
         for(int i = 0; i < (int) vector_array.size(); ++i){
 
@@ -195,44 +206,40 @@ std::vector<int> CloneDetection::doDetection_ThreadVersion(){
                    vector_array[i][6] == vector_array[j][6]){
 
 
+                    result_array[i].push_back(j);
+
                 }
             }
         }
     }
 
-    return vector_array[0];
-
+    return result_array;
 }
 
-void CloneDetection::reportCodeClone(std::vector<int> detection_result){
+void CloneDetection::readDetectionResult(std::vector<std::vector<int>> result){
 
-    int i,j;
-    char clone_detected;
+    int i,j,clone_id;
 
-    for(i = 0; i < (int) detection_result.size(); ++i){
+    std::vector<int> flags;
 
-        clone_detected = 0;
+    flags.resize(result.size());
 
-        for(j = i+1; j < (int) detection_result.size(); ++j){
+    for(i = 0; i < (int) result.size(); ++i){
 
-            if(detection_result[j] != 0 &&
-               detection_result[i] == detection_result[j]){
+        if(result[i].size() > 0 && !flags[i]){
 
-                if(!clone_detected){
+            std::cout << "Analyzed => Class: " << methods_array[i]["class"] << " Method: " << methods_array[i]["name"] << std::endl;
 
-                    std::cout << "Analyzing => Class: " << methods_array[i]["class"] << " Method: " << methods_array[i]["name"] << std::endl;
-                    clone_detected = 1;
+            for(j = 0; j < (int) result[i].size(); ++j){
+
+                clone_id = result[i][j];
+
+                if(!flags[clone_id]){
+
+                    std::cout << "Clone detected => Class: " << methods_array[clone_id]["class"] << " Method: " << methods_array[clone_id]["name"] << std::endl;
+                    flags[clone_id] = 1;
                 }
-
-                std::cout << "Clone detected => Class: " << methods_array[j]["class"] << " Method: " << methods_array[j]["name"] << std::endl;
-
-                detection_result[j] = 0;
             }
-        }
-
-        if(clone_detected){
-
-            std::cout << std::endl;
         }
     }
 }

@@ -1,11 +1,7 @@
 #include <iostream>
-<<<<<<< HEAD:CodeClone/main.cpp
-#include "clone_detection.h"
-=======
 #include <fstream>
 #include <jsoncpp/json/json.h>
 #include <../include/json_parser.hpp>
->>>>>>> a11a3466cfa23b7aba2c846a076d7cacf21fc98a:src/main.cpp
 
 using namespace std;
 
@@ -77,39 +73,11 @@ void ejemplo(){
     cout << "Language: " << method["language"].asString() << endl;
     cout << "Id: " << method["id"].asInt() << endl;
 
-<<<<<<< HEAD:CodeClone/main.cpp
 }
 
 
 int main(){
-
-    string prueba = "/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Type-2-Clones/prueba.json";
-
-    CloneDetection cd(prueba);
-
-    double start_time, run_time;
-
-    start_time = omp_get_wtime();
-    vector<int> result = cd.doDetection();
-    run_time = omp_get_wtime() - start_time;
-    cd.reportCodeClone(result);
-
-
-    cout << "Serial code clone detection in " << run_time << " seconds" << endl << endl;
-
-    start_time = omp_get_wtime();
-    result = cd.doDetection_ThreadVersion();
-    run_time = omp_get_wtime() - start_time;
-
-    cd.reportCodeClone(result);
-
-    cout << "OpenMP code clone detection in " << run_time << " seconds" << endl;
-
-=======
-    cout <<  "New";
-
     json_parse();
->>>>>>> a11a3466cfa23b7aba2c846a076d7cacf21fc98a:src/main.cpp
     return 0;
 }
 

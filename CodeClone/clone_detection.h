@@ -39,9 +39,11 @@ public:
     char compareMethods(std::vector<int> method_a,
                         std::vector<int> method_b);
 
-    std::vector<int> doDetection();
+    std::vector<std::vector<int>> doDetection();
 
-    std::vector<int> doDetection_ThreadVersion();
+    std::vector<std::vector<int>> doDetection_ThreadVersion();
+
+    void readDetectionResult(std::vector<std::vector<int>> result);
 
     void reportCodeClone(std::vector<int> detection_result);
 };
