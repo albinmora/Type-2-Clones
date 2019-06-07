@@ -18,13 +18,19 @@ private:
 
     Json::Value methods_array;
 
+    int number_of_methods;
+
     std::vector<int> vectorizeMethod(Json::Value method);
 
     std::vector<int> vectorizeMethod_ThreadVersion(Json::Value method);
 
+    int *vectorizeMethod_SIMDVersion(Json::Value method);
+
     std::vector<std::vector<int>> vectorizeJSON();
 
     std::vector<std::vector<int>> vectorizeJSON_ThreadVersion();
+
+    int *vectorizeJSON_SIMDVersion();
 
 public:
 
@@ -42,6 +48,8 @@ public:
     std::vector<std::vector<int>> doDetection();
 
     std::vector<std::vector<int>> doDetection_ThreadVersion();
+
+    int * doDetection_SIMDVersion();
 
     void readDetectionResult(std::vector<std::vector<int>> result);
 

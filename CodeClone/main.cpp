@@ -49,7 +49,7 @@ int main(){
 
     //generarWorkload(10000,"/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Type-2-Clones/prueba10k.json");
 
-    string prueba = "/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Type-2-Clones/prueba10k.json";
+    string prueba = "/home/albin/Documents/Type-2-Clones/prueba10k.json";
 
     CloneDetection cd(prueba);
 
@@ -64,7 +64,7 @@ int main(){
 
     start_time = omp_get_wtime();
     //cd.readDetectionResult(cd.doDetection_ThreadVersion());
-    cd.doDetection_ThreadVersion();
+    cd.doDetection_SIMDVersion();
     run_time = omp_get_wtime() - start_time;
 
     cout << "OpenMP code clone detection in " << run_time << " seconds" << endl;

@@ -1,5 +1,6 @@
 #include "clone_detection.h"
-
+#include  <xmmintrin.h>
+#include  <emmintrin.h>
 
 CloneDetection::CloneDetection(){
 
@@ -56,6 +57,21 @@ std::vector<int> CloneDetection::vectorizeMethod(Json::Value method){
 
 }
 
+int * CloneDetection::vectorizeMethod_SIMDVersion(Json::Value method){
+
+    int *vectorize_method;
+
+    vectorize_method = (int *)malloc(sizeof(int) * method_attributes.size() + 1);
+
+    for(int i = 0; i < (int) method_attributes.size(); ++i){
+
+        vectorize_method[i] = method[method_attributes[i]].asInt();
+    }
+    vectorize_method[method_attributes.size()] = 0;
+    return vectorize_method;
+
+}
+
 std::vector<int> CloneDetection::vectorizeMethod_ThreadVersion(Json::Value method){
 
     std::vector<int> vectorize_method;
@@ -102,6 +118,38 @@ std::vector<std::vector<int>> CloneDetection::vectorizeJSON(){
 
     ifs.close();
 
+    return vectors;
+}
+
+int * CloneDetection::vectorizeJSON_SIMDVersion(){
+
+    int * vectors;
+    int * sub_vec;
+
+    // Abrir el archivo
+    std::ifstream ifs(file_path);
+
+    // Objeto para leer el JSON
+    Json::Reader reader;
+
+    // Objeto para guardar un JSON Object leido
+    Json::Value array;
+
+    // Leer todo el JSON Array o JSON Object que este en el archivo
+    reader.parse(ifs, array);
+
+    vectors = (int *)malloc(sizeof(int) * 8 * array.size());
+
+    number_of_methods = array.size();
+
+    for(int i = 0; i < (int)array.size(); ++i){
+    	sub_vec = vectorizeMethod_SIMDVersion(array[i]);
+    	for(int j = 0; j < 8; j++){
+    		 vectors[i * 8 + j] = sub_vec[j];
+    	}
+    }
+
+    ifs.close();
     return vectors;
 }
 
@@ -166,13 +214,49 @@ std::vector<std::vector<int>> CloneDetection::doDetection(){
                vector_array[i][5] == vector_array[j][5] &&
                vector_array[i][6] == vector_array[j][6]){
 
-
                 result_array[i].push_back(j);
 
             }
         }
     }
 
+    return result_array;
+}
+
+int * CloneDetection::doDetection_SIMDVersion(){
+    int *vector_array;
+    int *result_array;
+    __m128i vector_arrayP1;
+    __m128i vector_arrayP2;
+    __m128i vector_arrayS1;
+    __m128i vector_arrayS2;
+
+    __m128i res1;
+    __m128i res2;
+
+    int eq1 = 0;
+    int eq2 = 0;
+
+    vector_array = vectorizeJSON_SIMDVersion();
+    result_array = (int *)calloc(sizeof(int), 8 * number_of_methods);
+
+
+    for(int i = 0; i < number_of_methods; ++i){
+        for(int j = i+1; j < number_of_methods; ++j){
+        	vector_arrayP1 = _mm_load_si128((__m128i*)(vector_array + (i*4)));
+        	vector_arrayP2 = _mm_load_si128((__m128i*)(vector_array + (i*4) + 4));
+
+        	vector_arrayS1 = _mm_load_si128((__m128i*)(vector_array + (j*4)));
+        	vector_arrayS2 = _mm_load_si128((__m128i*)(vector_array + (j*4) + 4));
+
+        	res1  =_mm_cmpeq_epi32 (vector_arrayP1, vector_arrayS1);
+        	res2  =_mm_cmpeq_epi32 (vector_arrayP2, vector_arrayS2);
+
+        	_mm_store_si128((__m128i*)&eq1, res1);
+        	_mm_store_si128((__m128i*)&eq2, res2);
+        	if(eq1 != 0 && eq2 !=0) result_array[i] =  j;
+        }
+    }
     return result_array;
 }
 
