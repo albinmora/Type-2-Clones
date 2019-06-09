@@ -47,11 +47,22 @@ void generarWorkload(int cantidad, std::string archivo){
 
 int main(){
 
-    //generarWorkload(10000,"/home/alfredo/Documentos/TEC/Arqui_II/Proyecto Final/Type-2-Clones/prueba10k.json");
+    generarWorkload(10000,"./prueba10k.json");
 
-    string prueba = "/home/albin/Documents/Type-2-Clones/prueba10k.json";
+    string prueba = "/prueba10k.json";
 
     CloneDetection cd(prueba);
+
+    std::vector<std::vector<int>> jsonClass = cd.vectorizeJSON();
+    cout << "size: " << jsonClass.size() << endl;
+    ofstream myfile;
+    myfile.open ("./metricas.txt");
+    for(int i=0; i<jsonClass.size();i++){
+        for(int j=0; j<7; j++){
+            myfile << jsonClass[i][j] << ",";
+        }
+    }
+    myfile.close();
 
     double start_time, run_time;
 

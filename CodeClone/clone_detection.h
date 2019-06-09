@@ -26,8 +26,6 @@ private:
 
     int *vectorizeMethod_SIMDVersion(Json::Value method);
 
-    std::vector<std::vector<int>> vectorizeJSON();
-
     std::vector<std::vector<int>> vectorizeJSON_ThreadVersion();
 
     int *vectorizeJSON_SIMDVersion();
@@ -40,7 +38,9 @@ public:
 
     std::string getFilePath() const;
 
-    void setFilePath(const std::string &value);
+    void setFilePath(const std::string &value);}
+    
+    std::vector<std::vector<int>> vectorizeJSON();
 
     char compareMethods(std::vector<int> method_a,
                         std::vector<int> method_b);

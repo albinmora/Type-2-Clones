@@ -27,3 +27,10 @@ sudo apt-get install libjsoncpp-dev
 ...
 
 ]
+
+
+CODE_DETECTION.CPP:
+g++ -o clone_Detection main.cpp clone_detection.cpp -std=c++11 -ljsoncpp
+
+CUDA:
+make
